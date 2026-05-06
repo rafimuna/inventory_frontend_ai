@@ -1,1 +1,29 @@
-// app global css
+body {
+  background: #f8fafc;
+}
+
+/* Card Base */
+.app-card {
+  border-radius: 16px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  transition: all 0.2s ease;
+}
+
+.app-card:hover {
+  border-color: #6366f1;
+  transform: translateY(-2px);
+}
+
+/* KPI Accent */
+.border-primary {
+  border-left: 4px solid #6366f1;
+}
+
+.border-warning {
+  border-left: 4px solid #f59e0b;
+}
+
+.border-success {
+  border-left: 4px solid #10b981;
+}

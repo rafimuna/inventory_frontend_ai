@@ -1,23 +1,111 @@
 <template>
-  <q-layout view="lHh Lpr lFf">
-    <q-header elevated>
+  <q-layout view="hHh Lpr lFf">
+    <!-- 🔝 HEADER -->
+    <q-header class="bg-positive text-white">
       <q-toolbar>
-        <q-btn flat dense round icon="menu" aria-label="Menu" @click="toggleLeftDrawer" />
+        <!-- Menu -->
+        <q-btn dense flat round icon="menu" @click="toggleLeftDrawer" />
 
-        <q-toolbar-title> Quasar App </q-toolbar-title>
+        <!-- Title -->
+        <q-toolbar-title class="text-weight-bold"> 📦 Inventory System </q-toolbar-title>
 
-        <div>Quasar v{{ $q.version }}</div>
+        <!-- User Info -->
+        <div class="row items-center q-gutter-sm">
+          <span class="text-subtitle2">Admin</span>
+
+          <!-- Logout -->
+          <q-btn
+            flat
+            dense
+            icon="logout"
+            label="Logout"
+            color="white"
+            class="q-ml-md"
+            @click="handleLogout"
+          />
+        </div>
       </q-toolbar>
     </q-header>
 
-    <q-drawer v-model="leftDrawerOpen" show-if-above bordered>
-      <q-list>
-        <q-item-label header> Essential Links </q-item-label>
+    <!-- 📂 DRAWER -->
+    <q-drawer
+      v-model="leftDrawerOpen"
+      show-if-above
+      bordered
+      :mini="miniState"
+      @mouseenter="miniState = false"
+      @mouseleave="miniState = true"
+      class="bg-grey-1"
+    >
+      <!-- Logo -->
+      <div class="q-pa-md text-center text-weight-bold">
+        <q-icon name="inventory_2" size="28px" />
+        <div v-if="!miniState">Inventory</div>
+      </div>
 
-        <EssentialLink v-for="link in linksList" :key="link.title" v-bind="link" />
+      <q-separator />
+
+      <!-- Navigation -->
+      <q-list padding>
+        <q-item-label header v-if="!miniState"> Main </q-item-label>
+
+        <q-item
+          clickable
+          v-ripple
+          :to="{ name: 'dashboard' }"
+          exact
+          active-class="bg-primary text-white"
+        >
+          <q-item-section avatar>
+            <q-icon name="dashboard" />
+          </q-item-section>
+          <q-item-section v-if="!miniState"> Dashboard </q-item-section>
+        </q-item>
+
+        <q-item clickable v-ripple :to="{ name: 'products' }" active-class="bg-primary text-white">
+          <q-item-section avatar>
+            <q-icon name="inventory" />
+          </q-item-section>
+          <q-item-section v-if="!miniState"> Products </q-item-section>
+        </q-item>
+
+        <q-item
+          clickable
+          v-ripple
+          :to="{ name: 'categories' }"
+          active-class="bg-primary text-white"
+        >
+          <q-item-section avatar>
+            <q-icon name="category" />
+          </q-item-section>
+          <q-item-section v-if="!miniState"> Categories </q-item-section>
+        </q-item>
+
+        <q-item
+          clickable
+          v-ripple
+          :to="{ name: 'stock-logs' }"
+          active-class="bg-primary text-white"
+        >
+          <q-item-section avatar>
+            <q-icon name="history" />
+          </q-item-section>
+          <q-item-section v-if="!miniState"> Stock History </q-item-section>
+        </q-item>
+
+        <q-item clickable v-ripple to="/forecast">
+          <q-item-section avatar><q-icon name="trending_up" /></q-item-section>
+          <q-item-section>Demand Forecast</q-item-section>
+        </q-item>
       </q-list>
+
+      <!-- Footer -->
+      <div class="absolute-bottom text-center q-pa-sm text-caption">
+        <span v-if="!miniState">v1.0.0</span>
+      </div>
     </q-drawer>
 
+    <!-- 📄 PAGE -->
     <q-page-container>
       <router-view />
     </q-page-container>
@@ -26,56 +114,34 @@
 
 <script setup>
 import { ref } from 'vue'
-import EssentialLink from 'components/EssentialLink.vue'
+import { useRouter } from 'vue-router'
+import { useQuasar } from 'quasar'
+import { useAuthStore } from 'src/stores/authStore'
 
-const linksList = [
-  {
-    title: 'Docs',
-    caption: 'quasar.dev',
-    icon: 'school',
-    link: 'https://quasar.dev',
-  },
-  {
-    title: 'Github',
-    caption: 'github.com/quasarframework',
-    icon: 'code',
-    link: 'https://github.com/quasarframework',
-  },
-  {
-    title: 'Discord Chat Channel',
-    caption: 'chat.quasar.dev',
-    icon: 'chat',
-    link: 'https://chat.quasar.dev',
-  },
-  {
-    title: 'Forum',
-    caption: 'forum.quasar.dev',
-    icon: 'record_voice_over',
-    link: 'https://forum.quasar.dev',
-  },
-  {
-    title: 'Twitter',
-    caption: '@quasarframework',
-    icon: 'rss_feed',
-    link: 'https://twitter.quasar.dev',
-  },
-  {
-    title: 'Facebook',
-    caption: '@QuasarFramework',
-    icon: 'public',
-    link: 'https://facebook.quasar.dev',
-  },
-  {
-    title: 'Quasar Awesome',
-    caption: 'Community Quasar projects',
-    icon: 'favorite',
-    link: 'https://awesome.quasar.dev',
-  },
-]
+const $q = useQuasar()
+const router = useRouter()
+const authStore = useAuthStore()
 
-const leftDrawerOpen = ref(false)
+const leftDrawerOpen = ref(true)
+const miniState = ref(true)
 
 function toggleLeftDrawer() {
   leftDrawerOpen.value = !leftDrawerOpen.value
+}
+
+function handleLogout() {
+  $q.dialog({
+    title: 'Logout',
+    message: 'Do you really want to logout?',
+    cancel: true,
+    persistent: true,
+  }).onOk(() => {
+    authStore.logout()
+    $q.notify({
+      type: 'positive',
+      message: 'Logged out successfully',
+    })
+    router.push('/login')
+  })
 }
 </script>
