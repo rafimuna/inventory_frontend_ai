@@ -97,6 +97,21 @@
           <q-item-section avatar><q-icon name="trending_up" /></q-item-section>
           <q-item-section>Demand Forecast</q-item-section>
         </q-item>
+
+        <!-- POS মেনু আইটেম -->
+        <q-item clickable v-ripple to="/pos">
+          <q-item-section avatar>
+            <q-icon name="point_of_sale" />
+          </q-item-section>
+          <q-item-section>POS (Point of Sale)</q-item-section>
+        </q-item>
+
+        <q-item clickable v-ripple to="/orders">
+          <q-item-section avatar>
+            <q-icon name="receipt_long" />
+          </q-item-section>
+          <q-item-section>Orders</q-item-section>
+        </q-item>
       </q-list>
 
       <!-- Footer -->

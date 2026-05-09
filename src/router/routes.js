@@ -31,6 +31,19 @@ const routes = [
         name: 'forecast',
         component: () => import('pages/ProductForecast.vue'),
       },
+      // POS রাউট যোগ করো
+      {
+        path: 'pos',
+        name: 'pos',
+        component: () => import('pages/POSPage.vue'),
+        meta: { requiresAuth: true },
+      },
+      {
+        path: 'orders',
+        name: 'orders',
+        component: () => import('pages/OrdersPage.vue'),
+        meta: { requiresAuth: true },
+      },
     ],
   },
   {
